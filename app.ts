@@ -7,7 +7,7 @@ import demo4 from "./demos/demo4/demo4";
 app.ws("/ws", (ws, req) => {
   ws.on("message", (msg) => {
     console.log(msg);
-    ws.send(`fluck you`);
+    ws.send(`Message received`);
   });
 });
 const rootWss = expressWs.getWss("/");
