@@ -1,5 +1,4 @@
 var express = require("express");
-
 const app = express();
 var expressWs = require("express-ws")(app);
 

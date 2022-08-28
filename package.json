@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/jonshaw199/af1-server-1#readme",
   "devDependencies": {
+    "@types/driftless": "^2.0.1",
     "@types/express": "^4.17.13",
     "@types/node": "^18.7.13",
     "nodemon": "^2.0.19",
@@ -26,6 +27,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "driftless": "^2.0.3",
     "express": "^4.18.1",
     "express-ws": "^5.0.2"
   }
