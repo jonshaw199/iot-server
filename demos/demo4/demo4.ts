@@ -7,7 +7,7 @@ const COEFS = [
   0.03, 0.01, 0.005, 0.003, 0.001, 0.0005, 0,
 ];
 const SCENE_MS = 7000;
-const INTERVAL_MS = 1000;
+const INTERVAL_MS = 200;
 
 export default class Demo4 {
   private static intervalId: number = -1;
@@ -38,8 +38,8 @@ export default class Demo4 {
       brightness: newBrightness,
       color: "red",
     };
-    console.log(`Sending msg: ${msg}`);
-    (Demo4.clients || []).forEach((client) => client.send(msg));
+    console.log(`Sending msg: ${JSON.stringify(msg)}`);
+    (Demo4.clients || []).forEach((client) => client.send(JSON.stringify(msg)));
   }
 
   static init(c: any[]) {
