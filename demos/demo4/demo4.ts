@@ -37,6 +37,9 @@ export default class Demo4 {
     const msg = {
       brightness: newBrightness,
       color: "red",
+      state: 3, // Demo4
+      senderID: -1, // Server
+      type: 4, // TYPE_RUN_DATA
     };
     console.log(`Sending msg: ${JSON.stringify(msg)}`);
     (Demo4.clients || []).forEach((client) => client.send(JSON.stringify(msg)));
