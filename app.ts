@@ -2,6 +2,8 @@ var express = require("express");
 const app = express();
 var expressWs = require("express-ws")(app);
 
+import demo4 from "./demos/demo4/demo4";
+
 app.ws("/ws", (ws, req) => {
   ws.on("message", (msg) => {
     console.log(msg);
@@ -11,8 +13,8 @@ app.ws("/ws", (ws, req) => {
 const rootWss = expressWs.getWss("/");
 
 app.post("/remote", (req, res) => {
-  res.send("Broadcasting message...");
-  rootWss?.clients?.forEach((client) => client.send("Heyo"));
+  demo4.toggle(rootWss.clients);
+  res.send();
 });
 
 const port = 3000;
