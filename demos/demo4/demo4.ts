@@ -1,13 +1,15 @@
 import { clearDriftless, setDriftlessInterval } from "driftless";
 
 const MAX_BRIGHTNESS = 200;
-const COEFS = [
-  0, 0.00001, 0.0001, 0.0003, 0.0005, 0.001, 0.003, 0.005, 0.01, 0.03, 0.05,
-  0.1, 0.15, 0.3, 0.5, 0.7, 0.9, 1, 1, 1, 0.9, 0.7, 0.5, 0.3, 0.15, 0.1, 0.05,
-  0.03, 0.01, 0.005, 0.003, 0.001, 0.0005, 0,
-];
 const SCENE_MS = 7000;
-const INTERVAL_MS = 200;
+const INTERVAL_MS = 100;
+
+let coefs = [
+  ...Array(MAX_BRIGHTNESS / 10).fill(0),
+  ...Array(MAX_BRIGHTNESS).keys(),
+  ...Array(MAX_BRIGHTNESS / 10).fill(MAX_BRIGHTNESS),
+];
+coefs = [...coefs, ...coefs.reverse()];
 
 export default class Demo4 {
   private static intervalId: number = -1;
@@ -20,20 +22,10 @@ export default class Demo4 {
 
     const curSceneMs = elapsedMs % SCENE_MS;
     const curSceneRatio = curSceneMs / SCENE_MS;
-    const coefArrIdxExact = curSceneRatio * COEFS.length;
-    const coefArrIdxTrunc = Math.floor(coefArrIdxExact);
-    const coefArrIdxRem = coefArrIdxExact - coefArrIdxTrunc;
 
-    const coefA = COEFS[coefArrIdxTrunc];
-    const coefB = COEFS[coefArrIdxTrunc + 1];
-    const min = Math.min(coefA, coefB);
-    const max = Math.max(coefA, coefB);
-    const dif = max - min;
+    const curArrIdx = Math.floor(curSceneRatio * coefs.length);
+    const newBrightness = coefs[curArrIdx];
 
-    const rem = coefArrIdxRem * dif;
-    const curCoef = min === coefA ? min + rem : max - rem;
-
-    const newBrightness = curCoef * MAX_BRIGHTNESS;
     const msg = {
       brightness: newBrightness,
       color: "red",
