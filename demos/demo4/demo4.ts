@@ -83,8 +83,10 @@ export default class Demo4 {
   static toggle(c: any[]) {
     if (Demo4.brightnessIntervalId < 0) {
       Demo4.init(c);
+      console.log("Starting");
     } else {
       Demo4.deinit();
+      console.log("Stopping");
     }
   }
 }
