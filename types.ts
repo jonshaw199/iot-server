@@ -1,0 +1,14 @@
+export enum MessageType {
+  TYPE_NONE = 1000,
+  TYPE_HANDSHAKE_REQUEST = 1001,
+  TYPE_HANDSHAKE_RESPONSE = 1002,
+  TYPE_CHANGE_STATE = 1003,
+  TYPE_RUN_DATA = 1004,
+}
+
+export enum State {
+  STATE_DEMO1 = 0,
+  STATE_DEMO2 = 1,
+  STATE_DEMO3 = 2,
+  STATE_DEMO4 = 3,
+}

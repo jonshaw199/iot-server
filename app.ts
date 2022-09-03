@@ -4,21 +4,7 @@ var expressWs = require("express-ws")(app);
 
 import demo4 from "./demos/demo4/demo4";
 import { Request, Response } from "express";
-
-enum MessageType {
-  TYPE_NONE = 0,
-  TYPE_HANDSHAKE_REQUEST = 1,
-  TYPE_HANDSHAKE_RESPONSE = 2,
-  TYPE_CHANGE_STATE = 3,
-  TYPE_RUN_DATA = 4,
-}
-
-enum State {
-  STATE_DEMO1 = 0,
-  STATE_DEMO2 = 1,
-  STATE_DEMO3 = 2,
-  STATE_DEMO4 = 3,
-}
+import { MessageType, State } from "./types";
 
 app.use(express.json());
 
@@ -45,7 +31,7 @@ app.post("/remote", (req: Request, res: Response) => {
 
     return res.send("State change success");
   }
-  res.send("Fail");
+  res.send("Unacceptable");
 });
 
 const port = 3000;

@@ -1,5 +1,7 @@
 import { clearDriftless, setDriftlessInterval } from "driftless";
 
+import { MessageType } from "../../types";
+
 const MAX_BRIGHTNESS = 200;
 const SCENE_MS = 7000;
 const BRIGHTNESS_INTERVAL_MS = 50;
@@ -50,7 +52,7 @@ export default class Demo4 {
     const msg = {
       state: 3, // Demo4
       senderID: -1, // Server
-      type: 4, // TYPE_RUN_DATA,
+      type: MessageType.TYPE_RUN_DATA, // TYPE_RUN_DATA,
       brightness: newBrightness,
       red,
       green,
