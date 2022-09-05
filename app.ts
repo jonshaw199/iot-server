@@ -10,8 +10,14 @@ app.use(express.json());
 
 app.ws("/ws", (ws, req: Request) => {
   ws.on("message", (msg) => {
-    console.log(msg);
-    ws.send(`Message received`);
+    console.log("Received msg: " + msg);
+    ws.send(JSON.stringify({ senderID: -1, type: -1, state: -1 }));
+  });
+  ws.on("error", (err) => {
+    console.log(err);
+  });
+  ws.on("close", () => {
+    console.log("close");
   });
 });
 const rootWss = expressWs.getWss("/");
