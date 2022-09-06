@@ -10,8 +10,19 @@ app.use(express.json());
 
 app.ws("/ws", (ws, req: Request) => {
   ws.on("message", (msg) => {
-    console.log("Received msg: " + msg);
-    ws.send(JSON.stringify({ senderID: -1, type: -1, state: -1 }));
+    process.stdout.write("."); // "." w/o newline
+    console.log(msg);
+    const out = {
+      senderID: -1,
+      type: 1004,
+      state: 2,
+      red: msg.accX,
+      blue: msg.accY,
+      green: msg.accZ,
+    };
+    console.log("Passing along msg");
+    console.log(out);
+    ws.send(JSON.stringify(out));
   });
   ws.on("error", (err) => {
     console.log(err);
