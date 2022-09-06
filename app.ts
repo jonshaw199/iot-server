@@ -9,16 +9,18 @@ import { MessageType, State } from "./types";
 app.use(express.json());
 
 app.ws("/ws", (ws, req: Request) => {
-  ws.on("message", (msg) => {
+  ws.on("message", (m) => {
     process.stdout.write("."); // "." w/o newline
+    const msg = JSON.parse(m);
     console.log(msg);
     const out = {
       senderID: -1,
       type: 1004,
       state: 2,
-      red: msg.accX,
-      blue: msg.accY,
-      green: msg.accZ,
+      red: Math.max(100 + 100 * (msg.accX || 0), 0),
+      blue: Math.max(100 + 100 * (msg.accY || 0), 0),
+      green: Math.max(100 + 100 * (msg.accZ || 0), 0),
+      brightness: 200,
     };
     console.log("Passing along msg");
     console.log(out);
