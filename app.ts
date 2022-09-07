@@ -8,49 +8,57 @@ import { MessageType, State } from "./types";
 
 app.use(express.json());
 
-app.ws("/ws", (ws, req: Request) => {
+app.ws("/rc/demo5/ws", (ws, req: Request) => {
   ws.on("message", (m) => {
-    process.stdout.write("."); // "." w/o newline
+    process.stdout.write("<");
     const msg = JSON.parse(m);
-    console.log(msg);
     const out = {
       senderID: -1,
-      type: 1004,
-      state: 2,
+      type: MessageType.TYPE_RUN_DATA,
+      state: State.STATE_DEMO5,
       red: Math.max(100 + 100 * (msg.accX || 0), 0),
       blue: Math.max(100 + 100 * (msg.accY || 0), 0),
       green: Math.max(100 + 100 * (msg.accZ || 0), 0),
       brightness: 200,
     };
-    console.log("Passing along msg");
-    console.log(out);
     ws.send(JSON.stringify(out));
+    process.stdout.write(">");
   });
   ws.on("error", (err) => {
-    console.log(err);
+    console.log("/rc/demo5/ws err: " + err);
   });
   ws.on("close", () => {
-    console.log("close");
+    console.log("Closing /rc/demo5/ws");
   });
 });
-const rootWss = expressWs.getWss("/");
 
-app.post("/remote", (req: Request, res: Response) => {
+app.ws("/lights/ws", (ws, req: Request) => {
+  ws.on("message", (m) => {
+    process.stdout.write("<");
+  });
+  ws.on("error", (err) => {
+    console.log("/lights/ws err: " + err);
+  });
+  ws.on("close", () => {
+    console.log("Closing /lights/ws");
+  });
+});
+
+const rcWss = expressWs.getWss("/rc/ws");
+const lightsWss = expressWs.getWss("lights/ws");
+
+app.post("/rc", (req: Request, res: Response) => {
   if (req.body.type === MessageType.TYPE_CHANGE_STATE) {
-    const msg = JSON.stringify({
-      type: MessageType.TYPE_CHANGE_STATE,
-      state: req.body.state,
-      senderID: -1,
-    });
-    (rootWss.clients || []).forEach((client) => client.send(msg));
+    const msg = JSON.stringify(req.body);
+    (lightsWss.clients || []).forEach((client) => client.send(msg));
 
     if (req.body.state === State.STATE_DEMO4) {
-      demo4.toggle(rootWss.clients);
+      demo4.toggle(lightsWss.clients);
     }
 
-    return res.send("State change success");
+    return res.send(`/rc: state change notification messages sent`);
   }
-  res.send("Unacceptable");
+  res.send("/rc: message type not recognized");
 });
 
 const port = 3000;

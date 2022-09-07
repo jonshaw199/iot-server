@@ -4,6 +4,7 @@ export enum MessageType {
   TYPE_HANDSHAKE_RESPONSE = 1002,
   TYPE_CHANGE_STATE = 1003,
   TYPE_RUN_DATA = 1004,
+  TYPE_RC_DATA = 1005,
 }
 
 export enum State {
@@ -11,4 +12,5 @@ export enum State {
   STATE_DEMO2 = 1,
   STATE_DEMO3 = 2,
   STATE_DEMO4 = 3,
+  STATE_DEMO5 = 4,
 }
