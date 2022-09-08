@@ -20,7 +20,7 @@ const getLightsClients = () =>
     return w.route == pLights;
   });
 
-app.ws("/rc/demo5/ws", (ws, req: Request) => {
+app.ws(pRc, (ws, req: Request) => {
   // https://gist.github.com/hugosp/5eeb2a375157625e21d33d75d10574df
   ws.route = pRc;
 
