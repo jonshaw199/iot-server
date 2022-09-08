@@ -5,7 +5,6 @@ var expressWs = require("express-ws")(app);
 import demo4 from "./demos/demo4/demo4";
 import { Request, Response } from "express";
 import { MessageType, State } from "./types";
-import { WebsocketMethod } from "express-ws";
 
 app.use(express.json());
 
