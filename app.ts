@@ -5,10 +5,26 @@ var expressWs = require("express-ws")(app);
 import demo4 from "./demos/demo4/demo4";
 import { Request, Response } from "express";
 import { MessageType, State } from "./types";
+import { WebsocketMethod } from "express-ws";
 
 app.use(express.json());
 
+const pRc = "/rc/demo5/ws";
+const pLights = "/lights/ws";
+
+const getRcClients = () =>
+  Array.from(expressWs.getWss().clients).filter((w: any) => {
+    return w.route == pRc;
+  });
+const getLightsClients = () =>
+  Array.from(expressWs.getWss().clients).filter((w: any) => {
+    return w.route == pLights;
+  });
+
 app.ws("/rc/demo5/ws", (ws, req: Request) => {
+  // https://gist.github.com/hugosp/5eeb2a375157625e21d33d75d10574df
+  ws.route = pRc;
+
   ws.on("message", (m) => {
     process.stdout.write("<");
     const msg = JSON.parse(m);
@@ -21,8 +37,11 @@ app.ws("/rc/demo5/ws", (ws, req: Request) => {
       green: Math.max(100 + 100 * (msg.accZ || 0), 0),
       brightness: 200,
     };
-    ws.send(JSON.stringify(out));
-    process.stdout.write(">");
+
+    getLightsClients().forEach(function (client: any) {
+      client.send(JSON.stringify(out));
+      process.stdout.write(">");
+    });
   });
   ws.on("error", (err) => {
     console.log("/rc/demo5/ws err: " + err);
@@ -32,7 +51,9 @@ app.ws("/rc/demo5/ws", (ws, req: Request) => {
   });
 });
 
-app.ws("/lights/ws", (ws, req: Request) => {
+app.ws(pLights, (ws, req: Request) => {
+  ws.route = pLights;
+
   ws.on("message", (m) => {
     process.stdout.write("<");
   });
@@ -44,16 +65,14 @@ app.ws("/lights/ws", (ws, req: Request) => {
   });
 });
 
-const rcWss = expressWs.getWss("/rc/ws");
-const lightsWss = expressWs.getWss("lights/ws");
-
 app.post("/rc", (req: Request, res: Response) => {
   if (req.body.type === MessageType.TYPE_CHANGE_STATE) {
     const msg = JSON.stringify(req.body);
-    (lightsWss.clients || []).forEach((client) => client.send(msg));
+    const c = getLightsClients();
+    c.forEach((client: any) => client.send(msg));
 
     if (req.body.state === State.STATE_DEMO4) {
-      demo4.toggle(lightsWss.clients);
+      demo4.toggle(c);
     }
 
     return res.send(`/rc: state change notification messages sent`);
