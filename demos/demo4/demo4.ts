@@ -58,7 +58,9 @@ export default class Demo4 {
       green,
       blue,
     };
-    console.log(`Sending msg: ${JSON.stringify(msg)}`);
+    // console.log(`Sending msg: ${JSON.stringify(msg)}`);
+    process.stdout.write(Demo4.clients?.length.toString());
+    process.stdout.write(">");
     (Demo4.clients || []).forEach((client) => client.send(JSON.stringify(msg)));
   }
 
