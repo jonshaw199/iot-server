@@ -8,7 +8,7 @@ import { MessageType, State } from "./types";
 
 app.use(express.json());
 
-const pRc = "/rc/demo5/ws";
+const pRc = "/rc/ws";
 const pLights = "/lights/ws";
 
 const getRcClients = () =>
@@ -26,6 +26,7 @@ app.ws(pRc, (ws, req: Request) => {
 
   ws.on("message", (m) => {
     process.stdout.write("<");
+    /*
     const msg = JSON.parse(m);
     const out = {
       senderID: -1,
@@ -41,6 +42,7 @@ app.ws(pRc, (ws, req: Request) => {
       client.send(JSON.stringify(out));
       process.stdout.write(">");
     });
+    */
   });
   ws.on("error", (err) => {
     console.log("/rc/demo5/ws err: " + err);
@@ -70,9 +72,11 @@ app.post("/rc", (req: Request, res: Response) => {
     const c = getLightsClients();
     c.forEach((client: any) => client.send(msg));
 
+    /*
     if (req.body.state === State.STATE_DEMO4) {
       demo4.toggle(c);
     }
+    */
 
     return res.send(`/rc: state change notification messages sent`);
   }
