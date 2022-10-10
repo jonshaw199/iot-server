@@ -2,7 +2,6 @@ var express = require("express");
 const app = express();
 var expressWs = require("express-ws")(app);
 
-import demo4 from "./demos/demo4/demo4";
 import { Request, Response } from "express";
 import { MessageType, State } from "./types";
 
@@ -68,6 +67,7 @@ app.ws(pLights, (ws, req: Request) => {
 
 app.post("/rc", (req: Request, res: Response) => {
   if (req.body.type === MessageType.TYPE_CHANGE_STATE) {
+    console.log("Sending state change messages: " + req.body.state);
     const msg = JSON.stringify(req.body);
     const c = getLightsClients();
     c.forEach((client: any) => client.send(msg));
