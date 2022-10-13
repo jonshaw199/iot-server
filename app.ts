@@ -56,6 +56,20 @@ app.ws(pLights, (ws, req: Request) => {
 
   ws.on("message", (m) => {
     process.stdout.write("<");
+    const msg = JSON.parse(m);
+    if (msg.type === 0) {
+      const out = {
+        senderID: 255,
+        type: msg.type,
+        state: msg.state,
+        motion: !!msg.motion
+      };
+  
+      getLightsClients().forEach(function (client: any) {
+        client.send(JSON.stringify(out));
+        process.stdout.write(">");
+      });
+    }
   });
   ws.on("error", (err) => {
     console.log("/lights/ws err: " + err);
