@@ -10,35 +10,33 @@ app.use(express.json());
 const pLights = "/lights/ws";
 
 const getLightsClients = () =>
-  Array.from(expressWs.getWss().clients).filter((w: any) => {
-    return w.route == pLights;
-  });
+  Array.from(expressWs.getWss().clients).filter((w: any) => w.route == pLights);
+
+const getLightsAudioClients = () => Array.from(expressWs.getWss().clients).filter((w: any) => w.info?.vs1053);
 
 app.ws(pLights, (ws, req: Request) => {
   ws.route = pLights;
 
   ws.on("message", (m) => {
-
-    console.log(`Clients: ${JSON.stringify(Array.from(expressWs.getWss().clients))}`);
-
     process.stdout.write("<");
     const msg = JSON.parse(m);
     switch (msg.type) {
-      case 0:
+      case MessageType.TYPE_MOTION:
+        console.log("Motion detection");
         const out = {
           senderID: 255,
           type: msg.type,
           state: msg.state,
           motion: !!msg.motion
         };
-    
-        getLightsClients().forEach(function (client: any) {
+        getLightsAudioClients().forEach(function (client: any) {
           client.send(JSON.stringify(out));
           process.stdout.write(">");
         });
         break;
-      case 109:
-        console.log(`Info msg: ${JSON.stringify(msg)}`);
+      case MessageType.TYPE_INFO:
+        console.log(`Info msg: ${JSON.stringify(msg.info)}`);
+        ws.info = msg.info;
         break;
     }
   });
