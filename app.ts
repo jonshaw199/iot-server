@@ -7,68 +7,39 @@ import { MessageType, State } from "./types";
 
 app.use(express.json());
 
-const pRc = "/rc/ws";
 const pLights = "/lights/ws";
 
-const getRcClients = () =>
-  Array.from(expressWs.getWss().clients).filter((w: any) => {
-    return w.route == pRc;
-  });
 const getLightsClients = () =>
   Array.from(expressWs.getWss().clients).filter((w: any) => {
     return w.route == pLights;
   });
 
-app.ws(pRc, (ws, req: Request) => {
-  // https://gist.github.com/hugosp/5eeb2a375157625e21d33d75d10574df
-  ws.route = pRc;
-
-  ws.on("message", (m) => {
-    process.stdout.write("<");
-    /*
-    const msg = JSON.parse(m);
-    const out = {
-      senderID: -1,
-      type: MessageType.TYPE_RUN_DATA,
-      state: State.STATE_DEMO5,
-      red: Math.max(100 + 100 * (msg.accX || 0), 0),
-      blue: Math.max(100 + 100 * (msg.accY || 0), 0),
-      green: Math.max(100 + 100 * (msg.accZ || 0), 0),
-      brightness: 200,
-    };
-
-    getLightsClients().forEach(function (client: any) {
-      client.send(JSON.stringify(out));
-      process.stdout.write(">");
-    });
-    */
-  });
-  ws.on("error", (err) => {
-    console.log("/rc/demo5/ws err: " + err);
-  });
-  ws.on("close", () => {
-    console.log("Closing /rc/demo5/ws");
-  });
-});
-
 app.ws(pLights, (ws, req: Request) => {
   ws.route = pLights;
 
   ws.on("message", (m) => {
+
+    console.log(`Clients: ${JSON.stringify(Array.from(expressWs.getWss().clients))}`);
+
     process.stdout.write("<");
     const msg = JSON.parse(m);
-    if (msg.type === 0) {
-      const out = {
-        senderID: 255,
-        type: msg.type,
-        state: msg.state,
-        motion: !!msg.motion
-      };
-  
-      getLightsClients().forEach(function (client: any) {
-        client.send(JSON.stringify(out));
-        process.stdout.write(">");
-      });
+    switch (msg.type) {
+      case 0:
+        const out = {
+          senderID: 255,
+          type: msg.type,
+          state: msg.state,
+          motion: !!msg.motion
+        };
+    
+        getLightsClients().forEach(function (client: any) {
+          client.send(JSON.stringify(out));
+          process.stdout.write(">");
+        });
+        break;
+      case 109:
+        console.log(`Info msg: ${JSON.stringify(msg)}`);
+        break;
     }
   });
   ws.on("error", (err) => {
@@ -84,7 +55,7 @@ app.post("/rc", (req: Request, res: Response) => {
     console.log("Sending state change messages: " + req.body.state);
     const msg = JSON.stringify(req.body);
     const c = getLightsClients();
-    c.forEach((client: any) => client.send(msg));
+    c.forEach((client: any) => {client.send(msg); console.log("sent")});
 
     /*
     if (req.body.state === State.STATE_DEMO4) {
