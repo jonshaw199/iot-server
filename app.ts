@@ -22,12 +22,12 @@ app.ws(pLights, (ws, req: Request) => {
     const msg = JSON.parse(m);
     switch (msg.type) {
       case MessageType.TYPE_MOTION:
-        console.log("Motion detection");
+        console.log(`Motion ${msg.motion ? "begin" : "end"}`);
         const out = {
           senderID: 255,
           type: msg.type,
           state: msg.state,
-          motion: !!msg.motion
+          motion: msg.motion
         };
         getLightsAudioClients().forEach(function (client: any) {
           client.send(JSON.stringify(out));
