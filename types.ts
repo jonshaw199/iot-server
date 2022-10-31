@@ -14,8 +14,7 @@ export enum MessageType {
 
 export enum State {
   STATE_HOME = 0,
-  STATE_SONG1,
-  STATE_SONG2,
+  STATE_PATTERN_TWINKLEFOX,
   STATE_INIT = 100,
   STATE_PURG,
   STATE_OTA,
