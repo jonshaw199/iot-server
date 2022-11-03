@@ -82,13 +82,6 @@ app.post(pRc, (req: Request, res: Response) => {
       client.send(msg);
       console.log("sent");
     });
-
-    /*
-    if (req.body.state === State.STATE_DEMO4) {
-      demo4.toggle(c);
-    }
-    */
-
     return res.send(`/rc: state change notification messages sent`);
   }
   res.send("/rc: message type not recognized");
