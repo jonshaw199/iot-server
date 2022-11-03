@@ -29,9 +29,9 @@ export enum State {
   STATE_RESTART,
   STATE_IDLE_BASE,
   STATE_SYNC_TEST
-}
+};
 
-export type Message {
+export type Message = {
   state: State | number,
   type: MessageType | number,
   transportType: TransportType | number,
