@@ -1,4 +1,5 @@
-export enum MessageType {
+export enum MessageType
+{
   TYPE_MOTION = 0,
   TYPE_NONE = 100,
   TYPE_HANDSHAKE_REQUEST,
@@ -10,7 +11,14 @@ export enum MessageType {
   TYPE_TIME_SYNC_RESPONSE,
   TYPE_TIME_SYNC_START,
   TYPE_INFO
-}
+};
+
+export enum TransportType
+{
+  TRANSPORT_ESPNOW,
+  TRANSPORT_WEBSOCKET,
+  TRANSPORT_NONE
+};
 
 export enum State {
   STATE_HOME = 0,
@@ -22,3 +30,10 @@ export enum State {
   STATE_IDLE_BASE,
   STATE_SYNC_TEST
 }
+
+export type Message {
+  state: State | number,
+  type: MessageType | number,
+  transportType: TransportType | number,
+  senderID: number
+};
