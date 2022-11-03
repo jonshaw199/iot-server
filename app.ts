@@ -7,15 +7,25 @@ import { MessageType, State } from "./types";
 
 app.use(express.json());
 
-const pLights = "/lights/ws";
+const pPrefix = "/:orgId";
+const pLightsWs = `${pPrefix}/lights/ws`;
+const pRc = `${pPrefix}/rc`;
+const pWebWs = `${pPrefix}/web/ws`;
 
-const getLightsClients = () =>
-  Array.from(expressWs.getWss().clients).filter((w: any) => w.route == pLights);
+const getLightsClients = (orgId: string) =>
+  Array.from(expressWs.getWss().clients).filter(
+    (w: any) => w.route == pLightsWs
+  );
 
-const getLightsAudioClients = () => Array.from(expressWs.getWss().clients).filter((w: any) => w.info?.vs1053);
+const getLightsAudioClients = (orgId: string) =>
+  getLightsClients(orgId).filter((w: any) => w.info?.vs1053);
 
-app.ws(pLights, (ws, req: Request) => {
-  ws.route = pLights;
+const getWebClients = (orgId: string) =>
+  Array.from(expressWs.getWss().clients).filter((w: any) => w.route == pWebWs);
+
+app.ws(pLightsWs, (ws, req: Request) => {
+  ws.orgId = req.params.orgId;
+  ws.route = pLightsWs;
 
   ws.on("message", (m) => {
     process.stdout.write("<");
@@ -27,9 +37,9 @@ app.ws(pLights, (ws, req: Request) => {
           senderID: 255,
           type: msg.type,
           state: msg.state,
-          motion: msg.motion
+          motion: msg.motion,
         };
-        getLightsAudioClients().forEach(function (client: any) {
+        getLightsAudioClients(ws.orgId).forEach(function (client: any) {
           client.send(JSON.stringify(out));
           process.stdout.write(">");
         });
@@ -48,12 +58,15 @@ app.ws(pLights, (ws, req: Request) => {
   });
 });
 
-app.post("/rc", (req: Request, res: Response) => {
+app.post(pRc, (req: Request, res: Response) => {
   if (req.body.type === MessageType.TYPE_CHANGE_STATE) {
     console.log("Sending state change messages: " + req.body.state);
     const msg = JSON.stringify(req.body);
-    const c = getLightsClients();
-    c.forEach((client: any) => {client.send(msg); console.log("sent")});
+    const c = getLightsClients(req.params.orgId);
+    c.forEach((client: any) => {
+      client.send(msg);
+      console.log("sent");
+    });
 
     /*
     if (req.body.state === State.STATE_DEMO4) {
