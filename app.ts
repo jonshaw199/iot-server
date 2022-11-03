@@ -58,6 +58,21 @@ app.ws(pLightsWs, (ws, req: Request) => {
   });
 });
 
+app.ws(pWebWs, (ws, req: Request) => {
+  ws.orgId = req.params.orgId;
+  ws.route = pWebWs;
+
+  ws.on("message", (m) => {
+    console.log(`Web ws msg: ${m}`);
+  });
+  ws.on("error", (err) => {
+    console.log("/lights/ws err: " + err);
+  });
+  ws.on("close", () => {
+    console.log("Closing /lights/ws");
+  });
+});
+
 app.post(pRc, (req: Request, res: Response) => {
   if (req.body.type === MessageType.TYPE_CHANGE_STATE) {
     console.log("Sending state change messages: " + req.body.state);
