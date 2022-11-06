@@ -1,83 +1,40 @@
-var express = require("express");
-const app = express();
-var expressWs = require("express-ws")(app);
-
+import express from "express";
+import express_ws, {Application} from "express-ws";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 import { Request, Response } from "express";
-import { MessageType, State } from "./types";
+import { WebSocket as WS } from "ws";
+
+const baseApp = express();
+const expressWs = express_ws(baseApp);
+const app = baseApp as unknown as Application;
+
+dotenv.config();
+
+import { PATH_LIGHTS_WS, PATH_RC, PATH_WEB_WS } from "./paths";
+import { MessageType, State, WebSocket } from "./types";
+import webRouter from "./routes/web";
+import lightsRouter from "./routes/lights";
+import Connections from "./connections";
+
+const connections = new Connections(expressWs);
 
 app.use(express.json());
 
-const pPrefix = "/:orgId";
-const pLightsWs = `${pPrefix}/lights/ws`;
-const pRc = `${pPrefix}/rc`;
-const pWebWs = `${pPrefix}/web/ws`;
-
-const getLightsClients = (orgId: string) =>
-  Array.from(expressWs.getWss().clients).filter(
-    (w: any) => w.route == pLightsWs
-  );
-
-const getLightsAudioClients = (orgId: string) =>
-  getLightsClients(orgId).filter((w: any) => w.info?.vs1053);
-
-const getWebClients = (orgId: string) =>
-  Array.from(expressWs.getWss().clients).filter((w: any) => w.route == pWebWs);
-
-app.ws(pLightsWs, (ws, req: Request) => {
-  ws.orgId = req.params.orgId;
-  ws.route = pLightsWs;
-
-  ws.on("message", (m) => {
-    process.stdout.write("<");
-    const msg = JSON.parse(m);
-    switch (msg.type) {
-      case MessageType.TYPE_MOTION:
-        console.log(`Motion ${msg.motion ? "begin" : "end"}`);
-        const out = {
-          senderID: 255,
-          type: msg.type,
-          state: msg.state,
-          motion: msg.motion,
-        };
-        getLightsAudioClients(ws.orgId).forEach(function (client: any) {
-          client.send(JSON.stringify(out));
-          process.stdout.write(">");
-        });
-        break;
-      case MessageType.TYPE_INFO:
-        console.log(`Info msg: ${JSON.stringify(msg.info)}`);
-        ws.info = msg.info;
-        break;
-    }
-  });
-  ws.on("error", (err) => {
-    console.log("/lights/ws err: " + err);
-  });
-  ws.on("close", () => {
-    console.log("Closing /lights/ws");
-  });
+app.use((req: Request, res: Response, next) => {
+  console.log(req);
+  next();
 });
 
-app.ws(pWebWs, (ws, req: Request) => {
-  ws.orgId = req.params.orgId;
-  ws.route = pWebWs;
+app.use('/', lightsRouter);
 
-  ws.on("message", (m) => {
-    console.log(`Web ws msg: ${m}`);
-  });
-  ws.on("error", (err) => {
-    console.log("/lights/ws err: " + err);
-  });
-  ws.on("close", () => {
-    console.log("Closing /lights/ws");
-  });
-});
+app.use('/', webRouter);
 
-app.post(pRc, (req: Request, res: Response) => {
+app.post(PATH_RC, (req: Request, res: Response) => {
   if (req.body.type === MessageType.TYPE_CHANGE_STATE) {
     console.log("Sending state change messages: " + req.body.state);
     const msg = JSON.stringify(req.body);
-    const c = getLightsClients(req.params.orgId);
+    const c = connections.getLightsClients(req.params.orgId);
     c.forEach((client: any) => {
       client.send(msg);
       console.log("sent");
@@ -87,7 +44,10 @@ app.post(pRc, (req: Request, res: Response) => {
   res.send("/rc: message type not recognized");
 });
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`AF1 server is running on port ${port}.`);
+mongoose.connect(process.env.MONGODB_URI, null, (err) => {
+	console.log(err || `Connected to MongoDB.`)
+});
+
+app.listen(process.env.PORT, () => {
+  console.log(`AF1 server is running on port ${process.env.PORT}.`);
 });

@@ -1,3 +1,7 @@
+import {WebSocket as WS} from 'ws';
+
+export type Nullable<T> = null | undefined | T;
+
 export enum MessageType
 {
   TYPE_MOTION = 0,
@@ -36,4 +40,11 @@ export type Message = {
   type: MessageType | number,
   transportType: TransportType | number,
   senderID: number
+};
+
+export type WebSocket = WS & {
+  path: Nullable<string>;
+  orgId: Nullable<string>;
+  deviceId: Nullable<string>;
+  info: Nullable<Object>; // To do
 };
