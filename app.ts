@@ -18,20 +18,15 @@ import { Request, WebSocket } from "./types";
 
 Connections.init(expressWs);
 
-app.ws("/", (w: WS, req: Request, next) => {
+app.ws("*", (w: WS, req: Request, next) => {
   const ws = w as WebSocket;
-  ws.path = req.route;
+  ws.path = req.path;
   ws.orgId = req.query.orgId?.toString();
   ws.deviceId = req.query.deviceId?.toString();
   next();
 });
 
 app.use(express.json());
-
-app.use((req: Request, res: Response, next) => {
-  console.log(req);
-  next();
-});
 
 app.use("/lights", lightsRouter);
 
