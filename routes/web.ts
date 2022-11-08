@@ -1,12 +1,11 @@
-
-import { Request, Response } from "express";
-import { PATH_WEB_WS } from "../paths";
-import {Router} from "express-ws";
+import { Router } from "express-ws";
 import { WebSocket as WS } from "ws";
-import { WebSocket } from "../types";
+import express from "express";
 
-const express = require('express');
-const webRouter = new express.Router() as Router;
+import { PATH_WEB_WS } from "../paths";
+import { WebSocket, Request } from "../types";
+
+const webRouter = express.Router() as Router;
 
 webRouter.ws(PATH_WEB_WS, (w: WS, req: Request) => {
   const ws = w as WebSocket;

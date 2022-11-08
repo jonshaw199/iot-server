@@ -1,12 +1,11 @@
-
-import { Request, Response } from "express";
-import { PATH_RC } from "../paths";
-import {Router} from "express-ws";
-import { MessageType } from "../types";
+import express, { Response } from "express";
+import { Router } from "express-ws";
 import Connections from "../connections";
 
-const express = require('express');
-const rcRouter = new express.Router() as Router;
+import { MessageType, Request } from "../types";
+import { PATH_RC } from "../paths";
+
+const rcRouter = express.Router() as Router;
 
 rcRouter.post(PATH_RC, (req: Request, res: Response) => {
   if (req.body.type === MessageType.TYPE_CHANGE_STATE) {

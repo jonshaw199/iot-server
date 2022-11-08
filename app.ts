@@ -1,8 +1,7 @@
-import express from "express";
-import express_ws, {Application} from "express-ws";
+import express, { Response } from "express";
+import express_ws, { Application } from "express-ws";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { Request, Response } from "express";
 
 const baseApp = express();
 const expressWs = express_ws(baseApp);
@@ -14,6 +13,7 @@ import webRouter from "./routes/web";
 import lightsRouter from "./routes/lights";
 import rcRouter from "./routes/rc";
 import Connections from "./connections";
+import { Request } from "./types";
 
 Connections.init(expressWs);
 
@@ -24,14 +24,14 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
-app.use('/', lightsRouter);
+app.use("/", lightsRouter);
 
-app.use('/', webRouter);
+app.use("/", webRouter);
 
 app.use("/", rcRouter);
 
 mongoose.connect(process.env.MONGODB_URI, null, (err) => {
-	console.log(err || `Connected to MongoDB.`)
+  console.log(err || `Connected to MongoDB.`);
 });
 
 app.listen(process.env.PORT, () => {

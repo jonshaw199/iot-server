@@ -1,13 +1,12 @@
-
-import { Request, Response } from "express";
 import { PATH_LIGHTS_WS, PATH_WEB_WS } from "../paths";
-import {Router} from "express-ws";
+import { Router } from "express-ws";
 import { WebSocket as WS } from "ws";
-import { MessageType, WebSocket } from "../types";
+import express from "express";
+
+import { MessageType, WebSocket, Request } from "../types";
 import Connections from "../connections";
 
-const express = require('express');
-const lightsRouter = new express.Router() as Router;
+const lightsRouter = express.Router() as Router;
 
 lightsRouter.ws(PATH_LIGHTS_WS, (w: WS, req: Request) => {
   const ws = w as WebSocket;
@@ -27,7 +26,9 @@ lightsRouter.ws(PATH_LIGHTS_WS, (w: WS, req: Request) => {
           state: msg.state,
           motion: msg.motion,
         };
-        Connections.getLightsAudioClients(ws.orgId).forEach(function (client: any) {
+        Connections.getLightsAudioClients(ws.orgId).forEach(function (
+          client: any
+        ) {
           client.send(JSON.stringify(out));
           process.stdout.write(">");
         });

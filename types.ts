@@ -1,9 +1,10 @@
-import {WebSocket as WS} from 'ws';
+import { WebSocket as WS } from "ws";
+import { Request as Req } from "express";
+import { Document } from "mongoose";
 
 export type Nullable<T> = null | undefined | T;
 
-export enum MessageType
-{
+export enum MessageType {
   TYPE_MOTION = 0,
   TYPE_NONE = 100,
   TYPE_HANDSHAKE_REQUEST,
@@ -14,15 +15,14 @@ export enum MessageType
   TYPE_TIME_SYNC,
   TYPE_TIME_SYNC_RESPONSE,
   TYPE_TIME_SYNC_START,
-  TYPE_INFO
-};
+  TYPE_INFO,
+}
 
-export enum TransportType
-{
+export enum TransportType {
   TRANSPORT_ESPNOW,
   TRANSPORT_WEBSOCKET,
-  TRANSPORT_NONE
-};
+  TRANSPORT_NONE,
+}
 
 export enum State {
   STATE_HOME = 0,
@@ -32,14 +32,14 @@ export enum State {
   STATE_OTA,
   STATE_RESTART,
   STATE_IDLE_BASE,
-  STATE_SYNC_TEST
-};
+  STATE_SYNC_TEST,
+}
 
 export type Message = {
-  state: State | number,
-  type: MessageType | number,
-  transportType: TransportType | number,
-  senderID: number
+  state: State | number;
+  type: MessageType | number;
+  transportType: TransportType | number;
+  senderID: number;
 };
 
 export type WebSocket = WS & {
@@ -47,4 +47,16 @@ export type WebSocket = WS & {
   orgId: Nullable<string>;
   deviceId: Nullable<string>;
   info: Nullable<Object>; // To do
+};
+
+export type Request = Req & {
+  user: Nullable<Document<User>>;
+};
+
+// Model interfaces
+
+export type User = {
+  name: string;
+  email: string;
+  password: string;
 };
