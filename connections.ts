@@ -1,7 +1,7 @@
 import { Instance } from "express-ws";
 
 import { PATH_LIGHTS_WS, PATH_WEB_WS } from "./paths";
-import { WebSocket, Nullable } from "./types";
+import { WebSocket } from "./types";
 
 export default class Connections {
   private static expressWsInstance: Instance;
