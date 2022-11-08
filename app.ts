@@ -17,7 +17,7 @@ import webRouter from "./routes/web";
 import lightsRouter from "./routes/lights";
 import Connections from "./connections";
 
-const connections = new Connections(expressWs);
+Connections.init(expressWs);
 
 app.use(express.json());
 
@@ -34,7 +34,7 @@ app.post(PATH_RC, (req: Request, res: Response) => {
   if (req.body.type === MessageType.TYPE_CHANGE_STATE) {
     console.log("Sending state change messages: " + req.body.state);
     const msg = JSON.stringify(req.body);
-    const c = connections.getLightsClients(req.params.orgId);
+    const c = Connections.getLightsClients(req.params.orgId);
     c.forEach((client: any) => {
       client.send(msg);
       console.log("sent");
