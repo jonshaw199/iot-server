@@ -1,11 +1,9 @@
-import { PATH_LIGHTS_WS } from "../paths";
-import { Router } from "express-ws";
 import express from "express";
 
 import { handleLightsReq } from "../controllers/lights";
 
-const lightsRouter = express.Router() as Router;
+const lightsRouter = express.Router();
 
-lightsRouter.ws(PATH_LIGHTS_WS, handleLightsReq);
+lightsRouter.ws("/ws", handleLightsReq as any);
 
 export default lightsRouter;

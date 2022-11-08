@@ -2,6 +2,7 @@ import express, { Response } from "express";
 import express_ws, { Application } from "express-ws";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { WebSocket as WS } from "ws";
 
 const baseApp = express();
 const expressWs = express_ws(baseApp);
@@ -13,9 +14,17 @@ import webRouter from "./routes/web";
 import lightsRouter from "./routes/lights";
 import rcRouter from "./routes/rc";
 import Connections from "./connections";
-import { Request } from "./types";
+import { Request, WebSocket } from "./types";
 
 Connections.init(expressWs);
+
+app.ws("/", (w: WS, req: Request, next) => {
+  const ws = w as WebSocket;
+  ws.path = req.route;
+  ws.orgId = req.query.orgId?.toString();
+  ws.deviceId = req.query.deviceId?.toString();
+  next();
+});
 
 app.use(express.json());
 
@@ -24,11 +33,11 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
-app.use("/", lightsRouter);
+app.use("/lights", lightsRouter);
 
-app.use("/", webRouter);
+app.use("/web", webRouter);
 
-app.use("/", rcRouter);
+app.use("/rc", rcRouter);
 
 mongoose.connect(process.env.MONGODB_URI, null, (err) => {
   console.log(err || `Connected to MongoDB.`);

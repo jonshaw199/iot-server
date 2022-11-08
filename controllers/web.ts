@@ -1,14 +1,6 @@
-import { WebSocket as WS } from "ws";
-
-import { PATH_WEB_WS } from "../paths";
 import { WebSocket, Request } from "../types";
 
-export const handleWebReq = (w: WS, req: Request) => {
-  const ws = w as WebSocket;
-  ws.path = PATH_WEB_WS;
-  ws.orgId = req.query.orgId?.toString();
-  ws.deviceId = req.query.deviceId?.toString();
-
+export const handleWebReq = (ws: WebSocket, req: Request) => {
   ws.on("message", (m) => {
     console.log(`Web ws msg: ${m}`);
   });

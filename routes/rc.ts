@@ -1,11 +1,9 @@
 import express from "express";
-import { Router } from "express-ws";
 
-import { PATH_RC } from "../paths";
 import { handleRcMsg } from "../controllers/rc";
 
-const rcRouter = express.Router() as Router;
+const rcRouter = express.Router();
 
-rcRouter.post(PATH_RC, handleRcMsg);
+rcRouter.post("/", handleRcMsg);
 
 export default rcRouter;

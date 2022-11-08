@@ -1,15 +1,7 @@
-import { PATH_LIGHTS_WS, PATH_WEB_WS } from "../paths";
-import { WebSocket as WS } from "ws";
-
 import { MessageType, WebSocket, Request } from "../types";
 import Connections from "../connections";
 
-export const handleLightsReq = (w: WS, req: Request) => {
-  const ws = w as WebSocket;
-  ws.path = PATH_LIGHTS_WS;
-  ws.orgId = req.query.orgId?.toString();
-  ws.deviceId = req.query.deviceId?.toString();
-
+export const handleLightsReq = (ws: WebSocket, req: Request) => {
   ws.on("message", (m) => {
     process.stdout.write("<");
     const msg = JSON.parse(m.toString());
