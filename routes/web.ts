@@ -1,27 +1,11 @@
 import { Router } from "express-ws";
-import { WebSocket as WS } from "ws";
 import express from "express";
 
 import { PATH_WEB_WS } from "../paths";
-import { WebSocket, Request } from "../types";
+import { handleWebReq } from "../controllers/web";
 
 const webRouter = express.Router() as Router;
 
-webRouter.ws(PATH_WEB_WS, (w: WS, req: Request) => {
-  const ws = w as WebSocket;
-  ws.path = PATH_WEB_WS;
-  ws.orgId = req.query.orgId?.toString();
-  ws.deviceId = req.query.deviceId?.toString();
-
-  ws.on("message", (m) => {
-    console.log(`Web ws msg: ${m}`);
-  });
-  ws.on("error", (err) => {
-    console.log("/lights/ws err: " + err);
-  });
-  ws.on("close", () => {
-    console.log("Closing /lights/ws");
-  });
-});
+webRouter.ws(PATH_WEB_WS, handleWebReq);
 
 export default webRouter;
