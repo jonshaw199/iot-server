@@ -13,6 +13,7 @@ dotenv.config();
 import webRouter from "./routes/web";
 import lightsRouter from "./routes/lights";
 import rcRouter from "./routes/rc";
+import usersRouter from "./routes/user";
 import Connections from "./connections";
 import { Request, WebSocket } from "./types";
 
@@ -33,6 +34,8 @@ app.use("/lights", lightsRouter);
 app.use("/web", webRouter);
 
 app.use("/rc", rcRouter);
+
+app.use("/user", usersRouter);
 
 mongoose.connect(process.env.MONGODB_URI, null, (err) => {
   console.log(err || `Connected to MongoDB.`);
