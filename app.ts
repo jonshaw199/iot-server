@@ -19,6 +19,35 @@ import { Request, WebSocket } from "./types";
 
 Connections.init(expressWs);
 
+mongoose.connect(process.env.MONGODB_URI, null, (err) => {
+  console.log(err || `Connected to MongoDB.`);
+});
+
+// Add headers before the routes are defined
+app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
+
+  // Request methods you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+
+  // Request headers you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  // res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
+
 app.ws("*", (w: WS, req: Request, next) => {
   const ws = w as WebSocket;
   ws.path = req.path;
@@ -37,8 +66,9 @@ app.use("/rc", rcRouter);
 
 app.use("/user", usersRouter);
 
-mongoose.connect(process.env.MONGODB_URI, null, (err) => {
-  console.log(err || `Connected to MongoDB.`);
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
 });
 
 app.listen(process.env.PORT, () => {
