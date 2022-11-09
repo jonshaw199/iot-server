@@ -5,9 +5,9 @@ export const handleWebReq = (ws: WebSocket, req: Request) => {
     console.log(`Web ws msg: ${m}`);
   });
   ws.on("error", (err) => {
-    console.log("/lights/ws err: " + err);
+    console.log("/web/ws err: " + err);
   });
   ws.on("close", () => {
-    console.log("Closing /lights/ws");
+    console.log("Closing /web/ws");
   });
 };
