@@ -31,6 +31,7 @@ export const create = (req, res) => {
       success: true,
       message: "User created. Token attached.",
       token,
+      user,
     });
   });
 };
