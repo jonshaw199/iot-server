@@ -64,9 +64,20 @@ export type User = {
 
 // API
 
+export type AuthRequest = {
+  email: string;
+  password: string;
+};
+
+export type AuthResponse = {
+  success: boolean;
+  message: string;
+  token: string;
+};
+
 export type UserResponse = {
-  message?: string;
-  success?: boolean;
+  message: string;
+  success: boolean;
   token?: string;
   user: User;
 };
