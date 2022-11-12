@@ -3,6 +3,7 @@ import express_ws, { Application } from "express-ws";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { WebSocket as WS } from "ws";
+import cors from "cors";
 
 const baseApp = express();
 const expressWs = express_ws(baseApp);
@@ -22,6 +23,8 @@ Connections.init(expressWs);
 mongoose.connect(process.env.MONGODB_URI, null, (err) => {
   console.log(err || `Connected to MongoDB.`);
 });
+
+app.use(cors());
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
