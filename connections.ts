@@ -15,8 +15,8 @@ export default class Connections {
     );
 
   public static getLightsAudioClients = (orgId: string) =>
-    this.getLightsClients(orgId).filter((w: any) => w.info?.vs1053);
+    this.getLightsClients(orgId).filter((w: WebSocket) => w.info?.vs1053);
 
   public static getLightsWebClients = (orgId: string) =>
-    this.getLightsClients(orgId).filter((w: any) => w.info?.webClient);
+    this.getLightsClients(orgId).filter((w: WebSocket) => w.info?.webClient);
 }

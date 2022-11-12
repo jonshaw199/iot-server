@@ -35,6 +35,16 @@ export enum State {
   STATE_SYNC_TEST,
 }
 
+export type Info = {
+  arduinoM5StickC?: boolean;
+  vs1053?: boolean;
+  webClient?: boolean;
+  ir?: boolean;
+  staticIp?: string;
+  master?: boolean;
+  esp32?: boolean;
+};
+
 export type Message = {
   state: State | number;
   type: MessageType | number;
@@ -42,11 +52,15 @@ export type Message = {
   senderID: number;
 };
 
+export type InfoMessage = Message & {
+  info: Info;
+};
+
 export type WebSocket = WS & {
   path: Nullable<string>;
   orgId: Nullable<string>;
   deviceId: Nullable<string>;
-  info: Nullable<Object>; // To do
+  info?: Nullable<Info>;
 };
 
 export type Request = Req & {
