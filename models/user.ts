@@ -28,4 +28,14 @@ userSchema.pre("save", function (next) {
   next();
 });
 
+// Duplicate the ID field.
+userSchema.virtual("uuid").get(function () {
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised.
+userSchema.set("toJSON", {
+  virtuals: true,
+});
+
 export default mongoose.model<User>("User", userSchema);

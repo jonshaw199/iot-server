@@ -61,3 +61,12 @@ export type User = {
   password: string;
   uuid: string;
 };
+
+// API
+
+export type UserResponse = {
+  message?: string;
+  success?: boolean;
+  token?: string;
+  user: User;
+};
