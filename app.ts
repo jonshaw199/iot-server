@@ -11,7 +11,6 @@ const app = baseApp as unknown as Application;
 
 dotenv.config();
 
-import webRouter from "./routes/web";
 import lightsRouter from "./routes/lights";
 import rcRouter from "./routes/rc";
 import usersRouter from "./routes/user";
@@ -62,8 +61,6 @@ app.ws("*", (w: WS, req: Request, next) => {
 app.use(express.json());
 
 app.use("/lights", lightsRouter);
-
-app.use("/web", webRouter);
 
 app.use("/rc", rcRouter);
 

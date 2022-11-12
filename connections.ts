@@ -17,8 +17,6 @@ export default class Connections {
   public static getLightsAudioClients = (orgId: string) =>
     this.getLightsClients(orgId).filter((w: any) => w.info?.vs1053);
 
-  public static getWebClients = (orgId: string) =>
-    Array.from(this.expressWsInstance.getWss().clients).filter((w: WebSocket) =>
-      w.path.includes("/web/ws")
-    );
+  public static getLightsWebClients = (orgId: string) =>
+    this.getLightsClients(orgId).filter((w: any) => w.info?.webClient);
 }
