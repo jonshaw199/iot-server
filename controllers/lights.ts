@@ -9,7 +9,7 @@ export const handleLightsReq = (ws: WebSocket, req: Request) => {
       case MessageType.TYPE_MOTION:
         console.log(`Motion ${msg.motion ? "begin" : "end"}`);
         const out = {
-          senderID: 255,
+          senderID: process.env.DEVICE_ID,
           type: msg.type,
           state: msg.state,
           motion: msg.motion,
