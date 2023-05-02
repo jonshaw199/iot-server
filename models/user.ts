@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema<User>({
   name: { type: String },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  orgId: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },
 });
 
 // adds a method to a user document object to create a hashed password
@@ -28,14 +29,6 @@ userSchema.pre("save", function (next) {
   next();
 });
 
-// Duplicate the ID field.
-userSchema.virtual("uuid").get(function () {
-  return this._id.toHexString();
-});
+const userModel = mongoose.model<User>("User", userSchema);
 
-// Ensure virtual fields are serialised.
-userSchema.set("toJSON", {
-  virtuals: true,
-});
-
-export default mongoose.model<User>("User", userSchema);
+export default userModel;

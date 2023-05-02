@@ -1,8 +1,7 @@
-import express, { Response } from "express";
+import express from "express";
 import express_ws, { Application } from "express-ws";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { WebSocket as WS } from "ws";
 import cors from "cors";
 
 const baseApp = express();
@@ -11,13 +10,15 @@ const app = baseApp as unknown as Application;
 
 dotenv.config();
 
-import lightsRouter from "./routes/lights";
-import rcRouter from "./routes/rc";
 import usersRouter from "./routes/user";
-import Connections from "./connections";
-import { Request, WebSocket } from "./types";
+import orgRouter from "./routes/org";
+import deviceRouter from "./routes/device";
+import MQTT from "./mqtt";
+import rootRouter from "./routes/root";
+import Websocket from "./websocket";
 
-Connections.init(expressWs);
+Websocket.init(expressWs);
+MQTT.init();
 
 mongoose.connect(process.env.MONGODB_URI, null, (err) => {
   console.log(err || `Connected to MongoDB.`);
@@ -28,7 +29,7 @@ app.use(cors());
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
   // Request methods you wish to allow
   res.setHeader(
@@ -50,27 +51,20 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.ws("*", (w: WS, req: Request, next) => {
-  const ws = w as WebSocket;
-  ws.path = req.path;
-  ws.orgId = req.query.orgId?.toString();
-  ws.deviceId = req.query.deviceId?.toString();
-  next();
-});
-
 app.use(express.json());
 
-app.use("/lights", lightsRouter);
-
-app.use("/rc", rcRouter);
-
+app.use("/", rootRouter);
 app.use("/user", usersRouter);
+app.use("/org", orgRouter);
+app.use("/device", deviceRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`AF1 server is running on port ${process.env.PORT}.`);
+const port = process.env.PORT;
+
+app.listen(port, () => {
+    console.log(port ? `AF1 server is running on port ${port}.` :  `Wheres me envs`)
 });
